@@ -1,7 +1,6 @@
-package com.ejbank.api;
+package com.ejbank.api.test;
 
-import com.ejbank.api.payload.PeoplePayload;
-import com.ejbank.test.TestBeanLocal;
+import com.ejbank.session.test.TestBeanLocal;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
