@@ -21,6 +21,6 @@ public class User {
     @GET
     @Path("/{id}")
     public String getFullName(@PathParam("id") String id) {
-        return "fullName";
+        return "firstname + lastname";
     }
 }
