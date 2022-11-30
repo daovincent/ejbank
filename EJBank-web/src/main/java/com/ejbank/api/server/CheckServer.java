@@ -1,5 +1,7 @@
 package com.ejbank.api.server;
 
+import com.ejbank.session.test.ServerPayload;
+
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 public class CheckServer {
 
     @GET
-    @Path("/status")
+    @Path("/status2")
     public ServerPayload getStatus() {
         return new ServerPayload(true);
     }

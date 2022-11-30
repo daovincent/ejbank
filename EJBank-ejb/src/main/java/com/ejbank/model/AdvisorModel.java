@@ -1,18 +1,17 @@
 package com.ejbank.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ejbank_advisor")
 public class AdvisorModel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     public AdvisorModel() {
     }
 
-    @Id
     public int getId() {
         return id;
     }

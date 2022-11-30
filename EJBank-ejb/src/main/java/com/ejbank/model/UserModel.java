@@ -1,22 +1,30 @@
 package com.ejbank.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "ejbak_user")
-public class UserModel {
+@Table(name = "ejbank_user")
+public class UserModel implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "login", nullable = false, length = 8)
     private String login;
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
+    @Column(name = "email", nullable = false, length = 255)
     private String email;
+    @Column(name = "firstname", nullable = false, length = 50)
     private String firstname;
+    @Column(name = "lastname", nullable = false, length = 50)
     private String lastname;
+    @Column(name = "type", nullable = false, length = 50)
     private String type;
 
     public UserModel() {
     }
 
-    @Id
     public int getId() {
         return id;
     }
@@ -24,7 +32,7 @@ public class UserModel {
         this.id = id;
     }
 
-    @Column(name = "login", nullable = false, length = 8)
+
     public String getLogin() {
         return login;
     }
@@ -32,7 +40,6 @@ public class UserModel {
         this.login = login;
     }
 
-    @Column(name = "password", nullable = false, length = 255)
     public String getPassword() {
         return password;
     }
@@ -40,7 +47,6 @@ public class UserModel {
         this.password = password;
     }
 
-    @Column(name = "email", nullable = false, length = 255)
     public String getEmail() {
         return email;
     }
@@ -48,7 +54,7 @@ public class UserModel {
         this.email = email;
     }
 
-    @Column(name = "firstname", nullable = false, length = 50)
+
     public String getFirstname() {
         return firstname;
     }
@@ -56,7 +62,7 @@ public class UserModel {
         this.firstname = firstname;
     }
 
-    @Column(name = "lastname", nullable = false, length = 50)
+
     public String getLastname() {
         return lastname;
     }
@@ -64,7 +70,7 @@ public class UserModel {
         this.lastname = lastname;
     }
 
-    @Column(name = "type", nullable = false, length = 50)
+
     public String getType() {
         return type;
     }

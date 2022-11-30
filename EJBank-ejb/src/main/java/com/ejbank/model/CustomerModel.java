@@ -1,20 +1,19 @@
 package com.ejbank.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ejbank_customer")
 public class CustomerModel {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
     private int id;
+    @Column(name = "advisor_id", nullable = false)
     private int advisor_id;
 
     public CustomerModel() {
     }
 
-    @Id
     public int getId() {
         return id;
     }
@@ -22,7 +21,6 @@ public class CustomerModel {
         this.id = id;
     }
 
-    @Column(name = "advisor_id", nullable = false)
     public int getAdvisor_id() {
         return advisor_id;
     }

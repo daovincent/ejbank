@@ -1,22 +1,24 @@
 package com.ejbank.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ejbank_account")
 public class AccountModel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "customer_id", nullable = false)
     private int customer_id;
+    @Column(name = "account_type_id", nullable = false)
     private int account_type_id;
+    @Column(name = "balance", nullable = false)
     private int balance; //DECIMAL(10,0)
 
     public AccountModel() {
     }
 
-    @Id
+
     public int getId() {
         return id;
     }
@@ -24,7 +26,6 @@ public class AccountModel {
         this.id = id;
     }
 
-    @Column(name = "customer_id", nullable = false)
     public int getCustomer_id() {
         return customer_id;
     }
@@ -32,7 +33,6 @@ public class AccountModel {
         this.customer_id = customer_id;
     }
 
-    @Column(name = "account_type_id", nullable = false)
     public int getAccount_type_id() {
         return account_type_id;
     }
@@ -40,7 +40,6 @@ public class AccountModel {
         this.account_type_id = account_type_id;
     }
 
-    @Column(name = "balance", nullable = false)
     public int getBalance() {
         return balance;
     }

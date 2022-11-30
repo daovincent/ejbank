@@ -1,22 +1,23 @@
 package com.ejbank.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ejbank_account_type")
 public class AccountTypeModel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
+    @Column(name = "rate", nullable = false)
     private int rate;
+    @Column(name = "overdraft", nullable = false)
     private int overdraft;
 
     public AccountTypeModel() {
     }
 
-    @Id
     public int getId() {
         return id;
     }
@@ -24,7 +25,6 @@ public class AccountTypeModel {
         this.id = id;
     }
 
-    @Column(name = "name", nullable = false, length = 50)
     public String getName() {
         return name;
     }
@@ -32,7 +32,6 @@ public class AccountTypeModel {
         this.name = name;
     }
 
-    @Column(name = "rate", nullable = false)
     public int getRate() {
         return rate;
     }
@@ -40,7 +39,6 @@ public class AccountTypeModel {
         this.rate = rate;
     }
 
-    @Column(name = "overdraft", nullable = false)
     public int getOverdraft() {
         return overdraft;
     }

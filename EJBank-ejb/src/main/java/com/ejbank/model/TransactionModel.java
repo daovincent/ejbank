@@ -1,27 +1,32 @@
 package com.ejbank.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
 @Table(name = "ejbank_transaction")
 public class TransactionModel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "account_id_from", nullable = false)
     private int account_id_from;
+    @Column(name = "account_id_to", nullable = false)
     private int account_id_to;
+    @Column(name = "author", nullable = false)
     private int author;
+    @Column(name = "amount", nullable = false)
     private float amount; //DECIMAL(10,2)
+    @Column(name = "comment", nullable = false, length = 255)
     private String comment;
+    @Column(name = "applied", nullable = false)
     private int applied; //TINYINT(1)
+    @Column(name = "date", nullable = false)
     private Date dateTime; //DATETIME
 
     public TransactionModel() {
     }
 
-    @Id
     public int getId() {
         return id;
     }
@@ -29,7 +34,6 @@ public class TransactionModel {
         this.id = id;
     }
 
-    @Column(name = "account_id_from", nullable = false)
     public int getAccountIdFrom() {
         return account_id_from;
     }
@@ -37,7 +41,6 @@ public class TransactionModel {
         this.account_id_from = account_id_from;
     }
 
-    @Column(name = "account_id_to", nullable = false)
     public int getAccountIdTo() {
         return account_id_to;
     }
@@ -45,7 +48,6 @@ public class TransactionModel {
         this.account_id_to = account_id_to;
     }
 
-    @Column(name = "author", nullable = false)
     public int getAuthor() {
         return author;
     }
@@ -53,7 +55,6 @@ public class TransactionModel {
         this.author = author;
     }
 
-    @Column(name = "amount", nullable = false)
     public float getAmount() {
         return amount;
     }
@@ -61,7 +62,6 @@ public class TransactionModel {
         this.amount = amount;
     }
 
-    @Column(name = "comment", nullable = false, length = 255)
     public String getComment() {
         return comment;
     }
@@ -69,7 +69,6 @@ public class TransactionModel {
         this.comment = comment;
     }
 
-    @Column(name = "applied", nullable = false)
     public int getApplied() {
         return applied;
     }
@@ -77,7 +76,6 @@ public class TransactionModel {
         this.applied = applied;
     }
 
-    @Column(name = "date", nullable = false)
     public Date getDateTime() {
         return dateTime;
     }
