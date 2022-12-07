@@ -8,12 +8,15 @@ public class AccountModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(name = "customer_id", nullable = false)
-    private int customer_id;
-    @Column(name = "account_type_id", nullable = false)
-    private int account_type_id;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private CustomerModel customer;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "account_type_id", nullable = false)
+    private AccountTypeModel accountType;
     @Column(name = "balance", nullable = false)
-    private int balance; //DECIMAL(10,0)
+    private double balance;
 
     public AccountModel() {
     }
@@ -27,20 +30,20 @@ public class AccountModel {
     }
 
     public int getCustomer_id() {
-        return customer_id;
+        return customer.getId();
     }
     public void setCustomer_id(int customer_id) {
-        this.customer_id = customer_id;
+        this.setId(customer_id);
     }
 
-    public int getAccount_type_id() {
-        return account_type_id;
+    public AccountTypeModel getAccountType() {
+        return accountType;
     }
-    public void setAccount_type_id(int account_type_id) {
-        this.account_type_id = account_type_id;
+    public void setAccountType(AccountTypeModel accountType) {
+        this.accountType = accountType;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
     public void setBalance(int balance) {

@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 public class CheckServer {
 
     @GET
-    @Path("/status2")
+    @Path("/status")
     public ServerPayload getStatus() {
         return new ServerPayload(true);
     }

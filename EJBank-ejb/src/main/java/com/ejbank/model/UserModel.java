@@ -5,6 +5,9 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "ejbank_user")
+@DiscriminatorValue("none")
+@DiscriminatorColumn(name="type")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class UserModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

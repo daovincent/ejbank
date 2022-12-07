@@ -1,21 +1,16 @@
 package com.ejbank.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ejbank_advisor")
-public class AdvisorModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+@DiscriminatorValue(value="advisor")
+public class AdvisorModel extends UserModel{
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "advisor")
+    private List<CustomerModel> customerModels;
 
     public AdvisorModel() {
-    }
-
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
     }
 }

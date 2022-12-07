@@ -16,13 +16,13 @@ public class TransactionModel {
     @Column(name = "author", nullable = false)
     private int author;
     @Column(name = "amount", nullable = false)
-    private float amount; //DECIMAL(10,2)
+    private double amount;
     @Column(name = "comment", nullable = false, length = 255)
     private String comment;
     @Column(name = "applied", nullable = false)
-    private int applied; //TINYINT(1)
+    private Boolean applied;
     @Column(name = "date", nullable = false)
-    private Date dateTime; //DATETIME
+    private Date dateTime;
 
     public TransactionModel() {
     }
@@ -55,7 +55,7 @@ public class TransactionModel {
         this.author = author;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
     public void setAmount(float amount) {
@@ -69,10 +69,10 @@ public class TransactionModel {
         this.comment = comment;
     }
 
-    public int getApplied() {
+    public boolean getApplied() {
         return applied;
     }
-    public void setApplied(int applied) {
+    public void setApplied(boolean applied) {
         this.applied = applied;
     }
 
