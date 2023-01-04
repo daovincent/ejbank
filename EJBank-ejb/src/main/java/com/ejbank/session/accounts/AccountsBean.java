@@ -1,6 +1,9 @@
 package com.ejbank.session.accounts;
 
 import com.ejbank.model.AccountModel;
+import com.ejbank.model.AdvisorModel;
+import com.ejbank.model.CustomerModel;
+import com.ejbank.model.UserModel;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -16,15 +19,20 @@ public class AccountsBean implements AccountsBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
 
+    private List<AccountModel> getAccount(CustomerModel c){
+        return c.getAccountModels();
+    }
     @Override
     public AccountsPayload getCustomerAccounts(int id) {
-        List<AccountModel> accounts = em
-                .createQuery(
-                        "SELECT account FROM AccountModel account WHERE account.customer.id=:id",
-                        AccountModel.class
-                )
-                .setParameter("id", id)
-                .getResultList();
+        var user=em.find(UserModel.class,id);
+        ArrayList<AccountModel> accounts = new ArrayList<>();
+        if(user instanceof CustomerModel){
+            accounts.addAll(getAccount((CustomerModel) user));
+        } else if (user instanceof AdvisorModel) {
+            var customers = ((AdvisorModel) user).getCustomerModels();
+            customers.forEach(c->accounts.addAll(c.getAccountModels()));
+        }
+        System.out.println("Accounts : "+accounts);
 
         List<AccountsPayload.AccountsDetailsPayload> details = new ArrayList<>();
         for (AccountModel accountModel : accounts) {
@@ -32,8 +40,8 @@ public class AccountsBean implements AccountsBeanLocal {
                     accountModel.getId(),
                     accountModel.getAccountType().getName(),
                     accountModel.getBalance()
-                    ));
+            ));
         }
-        return new AccountsPayload(details, null);
+        return new AccountsPayload(details, details.isEmpty()?"Error : No account found for this user":null);
     }
 }

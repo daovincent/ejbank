@@ -13,4 +13,7 @@ public class AdvisorModel extends UserModel{
 
     public AdvisorModel() {
     }
+    public List<CustomerModel> getCustomerModels(){
+        return customerModels;
+    }
 }

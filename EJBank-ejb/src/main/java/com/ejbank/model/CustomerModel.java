@@ -19,10 +19,13 @@ public class CustomerModel extends UserModel{
     public CustomerModel() {
     }
 
-//    public AdvisorModel getAdvisor() {
-//        return advisor;
-//    }
-//    public void setAdvisor(AdvisorModel advisor) {
-//        this.advisor = advisor;
-//    }
+    public AdvisorModel getAdvisor() {
+        return advisor;
+    }
+    public void setAdvisor(AdvisorModel advisor) {
+        this.advisor = advisor;
+    }
+    public List<AccountModel> getAccountModels(){
+        return accountModels;
+    }
 }
