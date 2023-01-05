@@ -6,4 +6,5 @@ import javax.ejb.Local;
 public interface TransactionBeanLocal {
     TransactionResponsePayload submitTransaction(TransactionRequestPayload transactionRequestPayload);
     TransactionPayload transactionPreview(int source, int dest, double amount, int author);
+    Integer waitingValidation(int userId);
 }

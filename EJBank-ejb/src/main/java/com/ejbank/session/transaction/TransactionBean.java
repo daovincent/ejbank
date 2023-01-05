@@ -66,4 +66,9 @@ public class TransactionBean implements TransactionBeanLocal{
         payload.setMessage("Vous ne disposez pas d'un solde suffisant");
         return payload;
     }
+
+    @Override
+    public Integer waitingValidation(int userId) {
+        return 1;
+    }
 }
