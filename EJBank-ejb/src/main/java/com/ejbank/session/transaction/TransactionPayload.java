@@ -1,9 +1,11 @@
 package com.ejbank.session.transaction;
 
+import java.math.BigDecimal;
+
 public class TransactionPayload {
     private boolean result;
-    private double before;
-    private double after;
+    private BigDecimal before;
+    private BigDecimal after;
     private String message;
     private String error;
     private int id;
@@ -23,19 +25,19 @@ public class TransactionPayload {
         this.result = result;
     }
 
-    public double getBefore() {
+    public BigDecimal getBefore() {
         return before;
     }
 
-    public void setBefore(double before) {
+    public void setBefore(BigDecimal before) {
         this.before = before;
     }
 
-    public double getAfter() {
+    public BigDecimal getAfter() {
         return after;
     }
 
-    public void setAfter(double after) {
+    public void setAfter(BigDecimal after) {
         this.after = after;
     }
 

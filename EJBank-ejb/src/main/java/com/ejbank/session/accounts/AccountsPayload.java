@@ -9,6 +9,7 @@ public class AccountsPayload {
         private final int id;
         private final String type;
         private final BigDecimal amount;
+        private String user;
 
         public AccountsDetailsPayload(int id, String type, BigDecimal amount) {
             this.id = id;
