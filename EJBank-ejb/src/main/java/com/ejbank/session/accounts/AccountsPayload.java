@@ -8,6 +8,7 @@ public class AccountsPayload {
         private final int id;
         private final String type;
         private final double amount;
+        private String user;
 
         public AccountsDetailsPayload(int id, String type, double amount) {
             this.id = id;
@@ -25,6 +26,14 @@ public class AccountsPayload {
 
         public double getAmount() {
             return amount;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
         }
     }
 
