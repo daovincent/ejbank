@@ -27,6 +27,14 @@ public class AccountsPayload {
         public BigDecimal getAmount() {
             return amount;
         }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
     }
 
     private final List<AccountsDetailsPayload> accounts;

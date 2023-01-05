@@ -24,7 +24,6 @@ public class Accounts {
     @GET
     @Path("/{user_id}")
     public AccountsPayload getAccounts(@PathParam("user_id") int id) {
-        System.out.println("ACCOUNTS");
         return accountsBean.getCustomerAccounts(id);
     }
 
@@ -37,7 +36,7 @@ public class Accounts {
     @GET
     @Path("/all/{user_id}")
     public AccountsPayload getAllAccounts(@PathParam("user_id") int id) {
-        return getAccounts(id);
+        return accountsBean.getAllAccounts(id);
     }
 
 }

@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Stateless
@@ -42,6 +43,33 @@ public class AccountsBean implements AccountsBeanLocal {
                     accountModel.getBalance()
             ));
         }
+        return new AccountsPayload(details, details.isEmpty()?"Error : No account found for this user":null);
+    }
+    public AccountsPayload getAllAccounts(int id) {
+        var user=em.find(UserModel.class,id);
+        HashMap<String,List<AccountModel>> accounts = new HashMap<>();
+        if(user instanceof CustomerModel){
+            var name= user.getFirstname()+" "+user.getLastname();
+            accounts.put(name,getAccount((CustomerModel) user));
+
+        } else if (user instanceof AdvisorModel) {
+            var customers = ((AdvisorModel) user).getCustomerModels();
+            customers.forEach(c->{
+                var name = c.getFirstname()+" "+c.getLastname();
+            accounts.put(name,c.getAccountModels());
+            });
+        }
+
+        List<AccountsPayload.AccountsDetailsPayload> details = new ArrayList<>();
+        accounts.entrySet().forEach(e->e.getValue().forEach(a->{
+            var payload=new AccountsPayload.AccountsDetailsPayload(
+                    a.getId(),
+                    a.getAccountType().getName(),
+                    a.getBalance());
+            payload.setUser(e.getKey());
+            details.add(payload);
+
+        }));
         return new AccountsPayload(details, details.isEmpty()?"Error : No account found for this user":null);
     }
 }

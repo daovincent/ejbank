@@ -38,4 +38,32 @@ public class TransactionBean implements TransactionBeanLocal{
         }
         return new TransactionResponsePayload("false", "transaction rejected");
     }
+    @Override
+    public TransactionPayload transactionPreview(int source, int dest, double amount, int author){
+//        System.out.println("source : "+source+ " "+"dest : "+dest+ " "+"amount : "+amount+ " "+"author : "+author+ " ");
+        var payload=new TransactionPayload();
+        var sourceAcc=em.find(AccountModel.class, source);
+        var destAcc=em.find(AccountModel.class,dest);
+        if (sourceAcc==null || destAcc==null) {
+            payload.setResult(false);
+            payload.setBefore(amount);
+            payload.setAfter(0);
+            payload.setError("Error : One of the accounts given doesn't exist");
+            return payload;
+        }
+        var sourceBal=sourceAcc.getBalance();
+        var destBal=destAcc.getBalance();
+//        // Should verify if source account belongs to the author
+        if(sourceBal>0 && sourceBal> amount){
+            System.out.println(true);
+            payload.setResult(true);
+            // Result of transaction or result for source account ???
+            payload.setBefore(sourceBal-amount);
+            payload.setAfter(destBal+amount);
+            return payload;
+        }
+        payload.setResult(false);
+        payload.setMessage("Vous ne disposez pas d'un solde suffisant");
+        return payload;
+    }
 }
