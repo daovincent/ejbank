@@ -1,19 +1,33 @@
 package com.ejbank.session.transaction;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 
 public class TransactionRequestPayload {
-    private final int source;
-    private final int destination;
-    private final BigDecimal amount;
-    private final String comment;
-    private final int author;
+    private int source;
+    private int destination;
+    private double amount;
+    private String comment;
+    private int author;
 
-    public TransactionRequestPayload(int source, int destination, BigDecimal amount, String comment, int author) {
+    public void setSource(int source) {
         this.source = source;
+    }
+
+    public void setDestination(int destination) {
         this.destination = destination;
+    }
+
+    public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public void setAuthor(int author) {
         this.author = author;
     }
 
@@ -25,7 +39,7 @@ public class TransactionRequestPayload {
         return destination;
     }
 
-    public BigDecimal getAmount() {
+    public double getAmount() {
         return amount;
     }
 

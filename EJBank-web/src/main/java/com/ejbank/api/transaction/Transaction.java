@@ -6,6 +6,7 @@ import com.ejbank.session.transaction.TransactionResponsePayload;
 
 import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -33,7 +34,9 @@ public class Transaction {
 
     @POST
     @Path("/apply")
+    @Consumes(MediaType.APPLICATION_JSON)
     public TransactionResponsePayload applyTransaction(TransactionRequestPayload transactionRequestPayload) {
+        System.out.println(transactionRequestPayload.getAmount());
         return transactionBeanLocal.submitTransaction(transactionRequestPayload);
 }
 
