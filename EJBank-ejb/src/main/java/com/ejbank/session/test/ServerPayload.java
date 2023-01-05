@@ -1,4 +1,4 @@
-package com.ejbank.api.test;
+package com.ejbank.session.test;
 
 public class ServerPayload {
 

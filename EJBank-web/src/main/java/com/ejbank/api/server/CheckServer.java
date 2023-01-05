@@ -1,4 +1,6 @@
-package com.ejbank.api.test;
+package com.ejbank.api.server;
+
+import com.ejbank.session.test.ServerPayload;
 
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;

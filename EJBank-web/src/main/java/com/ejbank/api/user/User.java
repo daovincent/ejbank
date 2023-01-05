@@ -1,6 +1,8 @@
 package com.ejbank.api.user;
 
+import com.ejbank.model.UserModel;
 import com.ejbank.session.user.UserBeanLocal;
+import com.ejbank.session.user.UserPayload;
 
 import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
@@ -20,7 +22,7 @@ public class User {
 
     @GET
     @Path("/{id}")
-    public String getFullName(@PathParam("id") String id) {
-        return "fullName";
+    public UserPayload getFullName(@PathParam("id") Integer id) {
+        return userBeanLocal.getUser(id);
     }
 }
