@@ -1,6 +1,7 @@
 package com.ejbank.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "ejbank_account")
@@ -16,7 +17,7 @@ public class AccountModel {
     @JoinColumn(name = "account_type_id", nullable = false)
     private AccountTypeModel accountType;
     @Column(name = "balance", nullable = false)
-    private double balance;
+    private BigDecimal balance;
 
     public AccountModel() {
     }
@@ -43,10 +44,10 @@ public class AccountModel {
         this.accountType = accountType;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
     public void setBalance(int balance) {
-        this.balance = balance;
+        this.balance = BigDecimal.valueOf(balance);
     }
 }

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class TransactionRequestPayload {
     private int source;
     private int destination;
-    private double amount;
+    private BigDecimal amount;
     private String comment;
     private int author;
 
@@ -19,7 +19,7 @@ public class TransactionRequestPayload {
         this.destination = destination;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -39,7 +39,7 @@ public class TransactionRequestPayload {
         return destination;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 

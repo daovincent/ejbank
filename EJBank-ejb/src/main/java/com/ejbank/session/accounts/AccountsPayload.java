@@ -1,5 +1,6 @@
 package com.ejbank.session.accounts;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class AccountsPayload {
@@ -7,9 +8,9 @@ public class AccountsPayload {
     public static class AccountsDetailsPayload {
         private final int id;
         private final String type;
-        private final double amount;
+        private final BigDecimal amount;
 
-        public AccountsDetailsPayload(int id, String type, double amount) {
+        public AccountsDetailsPayload(int id, String type, BigDecimal amount) {
             this.id = id;
             this.type = type;
             this.amount = amount;
@@ -23,7 +24,7 @@ public class AccountsPayload {
             return type;
         }
 
-        public double getAmount() {
+        public BigDecimal getAmount() {
             return amount;
         }
     }
