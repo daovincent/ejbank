@@ -31,6 +31,7 @@ public class Transaction {
     @Path("/preview")
     @Consumes(MediaType.APPLICATION_JSON)
     public TransactionPayload recapitulationTransaction(TransactionPayload payload) {
+        System.out.println(payload);
         return transactionBeanLocal.transactionPreview(payload.getSource(),payload.getDestination(),payload.getAmount(),payload.getAuthor());
     }
 

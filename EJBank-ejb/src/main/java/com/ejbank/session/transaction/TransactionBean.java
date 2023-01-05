@@ -40,7 +40,7 @@ public class TransactionBean implements TransactionBeanLocal{
     }
     @Override
     public TransactionPayload transactionPreview(int source, int dest, double amount, int author){
-//        System.out.println("source : "+source+ " "+"dest : "+dest+ " "+"amount : "+amount+ " "+"author : "+author+ " ");
+        System.out.println("source : "+source+ " "+"dest : "+dest+ " "+"amount : "+amount+ " "+"author : "+author+ " ");
         var payload=new TransactionPayload();
         var sourceAcc=em.find(AccountModel.class, source);
         var destAcc=em.find(AccountModel.class,dest);
@@ -58,12 +58,14 @@ public class TransactionBean implements TransactionBeanLocal{
             System.out.println(true);
             payload.setResult(true);
             // Result of transaction or result for source account ???
-            payload.setBefore(sourceBal.add(BigDecimal.valueOf(-amount)));
+            payload.setBefore(sourceBal.subtract(BigDecimal.valueOf(amount)));
             payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
             return payload;
         }
         payload.setResult(false);
         payload.setMessage("Vous ne disposez pas d'un solde suffisant");
+        payload.setBefore(sourceBal.add(BigDecimal.valueOf(-amount)));
+        payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
         return payload;
     }
 }
