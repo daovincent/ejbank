@@ -68,4 +68,9 @@ public class TransactionBean implements TransactionBeanLocal{
         payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
         return payload;
     }
+
+    @Override
+    public Integer waitingValidation(int userId) {
+        return 1;
+    }
 }
