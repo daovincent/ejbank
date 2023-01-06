@@ -8,7 +8,9 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Stateless
@@ -71,6 +73,50 @@ public class TransactionBean implements TransactionBeanLocal{
 
     @Override
     public Integer waitingValidation(int userId) {
-        return 1;
+        AccountModel account = em.find(AccountModel.class, userId);
+        Long value = (Long) em.createQuery("select count(t) from TransactionModel t where (t.account_id_to = :id or t.account_id_from = :id) and t.applied = false")
+                .setParameter("id", account)
+                .getSingleResult();
+        return Math.toIntExact(value);
+    }
+
+    @Override
+    public TransactionValidationResponsePayload validationTransaction(TransactionValidationRequestPayload transactionValidationRequestPayload) {
+        TransactionModel transactionModel = em.find(TransactionModel.class, transactionValidationRequestPayload.getTransaction());
+        TransactionModel transaction = new TransactionModel(
+                transactionModel.getAccount_id_from(),
+                transactionModel.getAccount_id_to(),
+                transactionModel.getAuthor(),
+                transactionModel.getAmount(),
+                transactionModel.getComment()
+        );
+        transaction.setId(transactionValidationRequestPayload.getTransaction());
+        transaction.setApplied(transactionValidationRequestPayload.isApprove());
+        transaction.setDateTime(transactionModel.getDateTime());
+        if(em.merge(transaction) != transactionModel && transactionValidationRequestPayload.isApprove()) {
+            return new TransactionValidationResponsePayload(
+              false,
+              "Erreur de validation",
+                    "Erreur lors de la modification"
+            );
+        }
+        if (transactionValidationRequestPayload.isApprove()) {
+            return new TransactionValidationResponsePayload(
+                    true,
+                    "Transaction validée " + transactionModel.getId(),
+//                    String.valueOf(transactionModel.getId()),
+                    null
+            );
+        } else {
+            return new TransactionValidationResponsePayload(
+                    true,
+                    "Transaction rejetée",
+                    null
+            );
+        }
+
+
+
+
     }
 }
