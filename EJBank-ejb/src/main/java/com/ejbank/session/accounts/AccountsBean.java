@@ -56,7 +56,7 @@ public class AccountsBean implements AccountsBeanLocal {
             var customers = ((AdvisorModel) user).getCustomerModels();
             customers.forEach(c->{
                 var name = c.getFirstname()+" "+c.getLastname();
-            accounts.put(name,c.getAccountModels());
+                accounts.put(name,c.getAccountModels());
             });
         }
 
