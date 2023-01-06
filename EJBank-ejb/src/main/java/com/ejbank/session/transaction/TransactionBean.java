@@ -8,6 +8,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.logging.Logger;
 
@@ -69,6 +70,10 @@ public class TransactionBean implements TransactionBeanLocal{
 
     @Override
     public Integer waitingValidation(int userId) {
-        return 1;
+        AccountModel account = em.find(AccountModel.class, userId);
+        Long value = (Long) em.createQuery("select count(t) from TransactionModel t where (t.account_id_to = :id or t.account_id_from = :id) and t.applied = false")
+                .setParameter("id", account)
+                .getSingleResult();
+        return Math.toIntExact(value);
     }
 }
