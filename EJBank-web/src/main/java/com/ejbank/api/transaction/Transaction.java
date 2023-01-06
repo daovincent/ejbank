@@ -1,16 +1,10 @@
 package com.ejbank.api.transaction;
 
-import com.ejbank.session.transaction.TransactionBeanLocal;
-import com.ejbank.session.transaction.TransactionPayload;
-import com.ejbank.session.transaction.TransactionRequestPayload;
-import com.ejbank.session.transaction.TransactionResponsePayload;
+import com.ejbank.session.transaction.*;
 
 import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/transaction")
@@ -21,16 +15,16 @@ public class Transaction {
     @EJB
     private TransactionBeanLocal transactionBeanLocal;
 
-//    @GET
-//    @Path("/list/{account_id}/{offset}/{user_id}")
-//    public String getTransactionList(int account_id, int user_id) {
-//        return "";
-//    }
+    @GET
+    @Path("/list/{account_id}/{offset}/{user_id}")
+    public TransactionListPayload getTransactionList(@PathParam("account_id") int accountId,@PathParam("user_id") int userId,@PathParam("offset") int offset) {
+        return transactionBeanLocal.listTransactions(userId,accountId,offset);
+    }
 
     @POST
     @Path("/preview")
     @Consumes(MediaType.APPLICATION_JSON)
-    public TransactionPayload recapitulationTransaction(TransactionPayload payload) {
+    public TransactionPreviewResponsePayload recapitulationTransaction(TransactionPreviewRequestPayload payload) {
         System.out.println(payload);
         return transactionBeanLocal.transactionPreview(payload.getSource(),payload.getDestination(),payload.getAmount(),payload.getAuthor());
     }

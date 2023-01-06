@@ -5,5 +5,6 @@ import javax.ejb.Local;
 @Local
 public interface TransactionBeanLocal {
     TransactionResponsePayload submitTransaction(TransactionRequestPayload transactionRequestPayload);
-    TransactionPayload transactionPreview(int source, int dest, double amount, int author);
+    TransactionPreviewResponsePayload transactionPreview(int source, int dest, double amount, int author);
+    TransactionListPayload listTransactions(int userId, int accountId, int offset);
 }

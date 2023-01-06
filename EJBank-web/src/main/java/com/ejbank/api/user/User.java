@@ -1,6 +1,5 @@
 package com.ejbank.api.user;
 
-import com.ejbank.model.UserModel;
 import com.ejbank.session.user.UserBeanLocal;
 import com.ejbank.session.user.UserPayload;
 

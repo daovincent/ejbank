@@ -72,4 +72,22 @@ public class AccountsBean implements AccountsBeanLocal {
         }));
         return new AccountsPayload(details, details.isEmpty()?"Error : No account found for this user":null);
     }
+
+    public AccountDetailsPayload getDetailedAccount(int userId, int accountId){
+        var user=em.find(UserModel.class,userId);
+        var account=em.find(AccountModel.class,accountId);
+        var payload = new AccountDetailsPayload();
+        if (account == null || !(user instanceof CustomerModel) || account.getCustomer_id()!= user.getId()){
+            payload.setError("Error : There is a problem with the account id or the user id, " +
+                    "or the user isn't allowed to access this account");
+            return payload;
+        }
+        var advisor=((CustomerModel) user).getAdvisor().getFirstname()+" "+((CustomerModel) user).getAdvisor().getLastname();
+        payload.setAmount(account.getBalance());
+        payload.setOwner(user.getFirstname()+" "+user.getLastname());
+        payload.setRate(account.getAccountType().getRate());
+        payload.setInterest(0);
+        payload.setAdvisor(advisor);
+        return payload;
+    }
 }

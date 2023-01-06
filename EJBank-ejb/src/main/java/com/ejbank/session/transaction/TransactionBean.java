@@ -1,14 +1,13 @@
 package com.ejbank.session.transaction;
 
-import com.ejbank.model.AccountModel;
-import com.ejbank.model.TransactionModel;
-import com.ejbank.model.UserModel;
+import com.ejbank.model.*;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 @Stateless
@@ -39,9 +38,9 @@ public class TransactionBean implements TransactionBeanLocal{
         return new TransactionResponsePayload("false", "transaction rejected");
     }
     @Override
-    public TransactionPayload transactionPreview(int source, int dest, double amount, int author){
+    public TransactionPreviewResponsePayload transactionPreview(int source, int dest, double amount, int author){
         System.out.println("source : "+source+ " "+"dest : "+dest+ " "+"amount : "+amount+ " "+"author : "+author+ " ");
-        var payload=new TransactionPayload();
+        var payload=new TransactionPreviewResponsePayload();
         var sourceAcc=em.find(AccountModel.class, source);
         var destAcc=em.find(AccountModel.class,dest);
         if (sourceAcc==null || destAcc==null) {
@@ -66,6 +65,41 @@ public class TransactionBean implements TransactionBeanLocal{
         payload.setMessage("Vous ne disposez pas d'un solde suffisant");
         payload.setBefore(sourceBal.add(BigDecimal.valueOf(-amount)));
         payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
+        return payload;
+    }
+
+    public TransactionListPayload listTransactions(int userId, int accountId, int offset){
+        var payload= new TransactionListPayload();
+        var user=em.find(UserModel.class,userId);
+        var account=em.find(AccountModel.class,accountId);
+        if(user == null || account == null || user.getId()!= account.getCustomer_id()){
+            payload.setError("Error : There is a problem with the account id or the user id, " +
+                    "or the user isn't allowed to access this account");
+            return payload;
+        }
+        String author;
+        author= user.getFirstname()+" "+user.getLastname();
+        var transactions = account.getTransactionsFrom();
+        var allT= new ArrayList<TransactionPayload>();
+        for(var t : transactions){
+            var transacPayload= new TransactionPayload();
+            transacPayload.setDate(t.getDateTime());
+            var destUser= t.getAccount_id_to().getCustomer().getFirstname() + " " + t.getAccount_id_to().getCustomer().getLastname();
+            var source = t.getAccount_id_from().getId();
+            var dest=t.getAccount_id_to().getCustomer_id();
+            var state = t.getApplied()?"APPLYED":"WAITING_APPROVE";
+            transacPayload.setDestination(dest);
+            transacPayload.setSource(source);
+            transacPayload.setAuthor(author);
+            transacPayload.setAmount(t.getAmount());
+            transacPayload.setDestination_user(destUser);
+            transacPayload.setState(state);
+            transacPayload.setComment(t.getComment());
+            System.out.println(t);
+            System.out.println(transacPayload);
+            allT.add(transacPayload);
+        }
+
         return payload;
     }
 }
