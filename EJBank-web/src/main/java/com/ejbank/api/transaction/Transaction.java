@@ -1,9 +1,6 @@
 package com.ejbank.api.transaction;
 
-import com.ejbank.session.transaction.TransactionBeanLocal;
-import com.ejbank.session.transaction.TransactionPayload;
-import com.ejbank.session.transaction.TransactionRequestPayload;
-import com.ejbank.session.transaction.TransactionResponsePayload;
+import com.ejbank.session.transaction.*;
 
 import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
@@ -40,11 +37,13 @@ public class Transaction {
         return transactionBeanLocal.submitTransaction(transactionRequestPayload);
 }
 
-//    @POST
-//    @Path("/validation")
-//    public String validationTransaction() {
-//        return "";
-//    }
+    @POST
+    @Path("/validation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public TransactionValidationResponsePayload validationTransaction(TransactionValidationRequestPayload transactionValidationRequestPayload) {
+        return transactionBeanLocal.validationTransaction(transactionValidationRequestPayload);
+        // A MODIFIER QUAND LISTE TRANSACTION OK
+    }
 
     @GET
     @Path("/validation/notification/{user_id}")
