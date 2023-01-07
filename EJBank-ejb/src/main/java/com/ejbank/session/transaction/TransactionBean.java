@@ -6,8 +6,10 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Stateless
@@ -73,19 +75,22 @@ public class TransactionBean implements TransactionBeanLocal{
         var user=em.find(UserModel.class,userId);
         var account=em.find(AccountModel.class,accountId);
         String author=null;
+        String approval=null;
         if(user == null || account == null) {
             payload.setError("Error : There is a problem with the account id or the user id");
             return payload;
         }
         if (userId== account.getCustomer_id() ) {
             author= user.getFirstname()+" "+user.getLastname();
+            approval="WAITING_APPROVAL";
         }
         else if(account.getCustomer().getAdvisor().getId()==userId){
             author=account.getCustomer().getAdvisor().getFirstname()+" "+account.getCustomer().getAdvisor().getLastname();
+            approval="TO_APPROVE";
         }
         System.out.println(author);
 
-        var transactions = account.getTransactionsFrom();
+        var transactions = getTr(accountId,offset);
         // Marche pas > faut faire une requête SQL
         var allT= new ArrayList<TransactionPayload>();
         for(var t : transactions){
@@ -94,7 +99,7 @@ public class TransactionBean implements TransactionBeanLocal{
             var destUser= t.getAccount_id_to().getCustomer().getFirstname() + " " + t.getAccount_id_to().getCustomer().getLastname();
             var source = t.getAccount_id_from().getId();
             var dest=t.getAccount_id_to().getCustomer_id();
-            var state = t.getApplied()?"APPLYED":"WAITING_APPROVE";
+            var state = t.getApplied()?"APPLYED":approval;
             transacPayload.setDestination(dest);
             transacPayload.setSource(source);
             transacPayload.setAuthor(author);
@@ -107,5 +112,15 @@ public class TransactionBean implements TransactionBeanLocal{
             allT.add(transacPayload);
         }
         return payload;
+    }
+
+    private List<TransactionModel> getTr(int accountId, int offset){
+        TypedQuery<TransactionModel> query = em.createQuery(
+                "SELECT e FROM TransactionModel e " +
+                        "WHERE (e.account_id_from=:accountId OR e.account_id_to=:accountId)" +
+                        "ORDER BY e.dateTime desc", TransactionModel.class);
+        query.setMaxResults(10);
+        query.setFirstResult(offset);
+        return query.getResultList();
     }
 }

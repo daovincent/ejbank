@@ -78,9 +78,9 @@ public class AccountsBean implements AccountsBeanLocal {
             return  new AccountDetailsPayload(null,null,0,0,null,"Error : this account doesn't exist");
 
         }
-        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
-            return  new AccountDetailsPayload(null,null,0,0,null,"Error : this user isn't allowed to see this account");
-        }
+//        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
+//            return  new AccountDetailsPayload(null,null,0,0,null,"Error : this user isn't allowed to see this account");
+//        }
         var advisor=account.getCustomer().getAdvisor();
         return new AccountDetailsPayload(user.getFirstname()+" "+user.getLastname(),
                 advisor.getFirstname()+" "+advisor.getLastname(),account.getAccountType().getRate(),0,account.getBalance(),null);
