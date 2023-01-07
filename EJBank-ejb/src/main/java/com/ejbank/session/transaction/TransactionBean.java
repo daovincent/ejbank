@@ -1,6 +1,7 @@
 package com.ejbank.session.transaction;
 
 import com.ejbank.model.AccountModel;
+import com.ejbank.model.AdvisorModel;
 import com.ejbank.model.TransactionModel;
 import com.ejbank.model.UserModel;
 
@@ -10,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -73,10 +75,30 @@ public class TransactionBean implements TransactionBeanLocal{
 
     @Override
     public Integer waitingValidation(int userId) {
-        AccountModel account = em.find(AccountModel.class, userId);
-        Long value = (Long) em.createQuery("select count(t) from TransactionModel t where (t.account_id_to = :id or t.account_id_from = :id) and t.applied = false")
-                .setParameter("id", account)
-                .getSingleResult();
+        UserModel user = em.find(UserModel.class, userId);
+        int notification = 0;
+        if(user instanceof AdvisorModel) {
+            List<UserModel> customers = em.createQuery("select c from CustomerModel c where c.advisor=:advisor", UserModel.class)
+                    .setParameter("advisor", user)
+                    .getResultList();
+            for (UserModel customer : customers) {
+                notification += getUserNotif(customer);
+            }
+            return notification;
+        } else
+            return getUserNotif(user);
+    }
+
+    private Integer getUserNotif(UserModel user) {
+        Long value = 0L;
+        List<AccountModel> accounts = em.createQuery("select a from AccountModel a where a.customer =:user", AccountModel.class)
+                .setParameter("user", user)
+                .getResultList();
+        for (AccountModel account: accounts) {
+            value += (Long) em.createQuery("select count(t) from TransactionModel t where (t.account_id_to = :id or t.account_id_from = :id) and t.applied = false")
+                    .setParameter("id", account)
+                    .getSingleResult();
+        }
         return Math.toIntExact(value);
     }
 
