@@ -33,4 +33,13 @@ public class TransactionListPayload {
     public void setTotal(int total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "TransactionListPayload{" +
+                "transactions=" + transactions +
+                ", error='" + error + '\'' +
+                ", total=" + total +
+                '}';
+    }
 }

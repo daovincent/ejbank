@@ -18,10 +18,10 @@ public class Account {
 
     @EJB
     private AccountsBean accountsBean;
-    @GET
-    public AccountDetailsPayload test(){
-        return new AccountDetailsPayload();
-    }
+//    @GET
+//    public AccountDetailsPayload test(){
+//        return new AccountDetailsPayload();
+//    }
 
     @GET
     @Path("/{account_id}/{user_id}")

@@ -72,14 +72,21 @@ public class TransactionBean implements TransactionBeanLocal{
         var payload= new TransactionListPayload();
         var user=em.find(UserModel.class,userId);
         var account=em.find(AccountModel.class,accountId);
-        if(user == null || account == null || user.getId()!= account.getCustomer_id()){
-            payload.setError("Error : There is a problem with the account id or the user id, " +
-                    "or the user isn't allowed to access this account");
+        String author=null;
+        if(user == null || account == null) {
+            payload.setError("Error : There is a problem with the account id or the user id");
             return payload;
         }
-        String author;
-        author= user.getFirstname()+" "+user.getLastname();
+        if (userId== account.getCustomer_id() ) {
+            author= user.getFirstname()+" "+user.getLastname();
+        }
+        else if(account.getCustomer().getAdvisor().getId()==userId){
+            author=account.getCustomer().getAdvisor().getFirstname()+" "+account.getCustomer().getAdvisor().getLastname();
+        }
+        System.out.println(author);
+
         var transactions = account.getTransactionsFrom();
+        // Marche pas > faut faire une requête SQL
         var allT= new ArrayList<TransactionPayload>();
         for(var t : transactions){
             var transacPayload= new TransactionPayload();
@@ -95,11 +102,10 @@ public class TransactionBean implements TransactionBeanLocal{
             transacPayload.setDestination_user(destUser);
             transacPayload.setState(state);
             transacPayload.setComment(t.getComment());
-            System.out.println(t);
-            System.out.println(transacPayload);
+            System.out.println("T===="+t);
+            System.out.println("TRANSAC ="+transacPayload);
             allT.add(transacPayload);
         }
-
         return payload;
     }
 }

@@ -33,8 +33,6 @@ public class AccountsBean implements AccountsBeanLocal {
             var customers = ((AdvisorModel) user).getCustomerModels();
             customers.forEach(c->accounts.addAll(c.getAccountModels()));
         }
-        System.out.println("Accounts : "+accounts);
-
         List<AccountsPayload.AccountsDetailsPayload> details = new ArrayList<>();
         for (AccountModel accountModel : accounts) {
             details.add(new AccountsPayload.AccountsDetailsPayload(
@@ -76,18 +74,15 @@ public class AccountsBean implements AccountsBeanLocal {
     public AccountDetailsPayload getDetailedAccount(int userId, int accountId){
         var user=em.find(UserModel.class,userId);
         var account=em.find(AccountModel.class,accountId);
-        var payload = new AccountDetailsPayload();
-        if (account == null || !(user instanceof CustomerModel) || account.getCustomer_id()!= user.getId()){
-            payload.setError("Error : There is a problem with the account id or the user id, " +
-                    "or the user isn't allowed to access this account");
-            return payload;
+        if (account == null){
+            return  new AccountDetailsPayload(null,null,0,0,null,"Error : this account doesn't exist");
+
         }
-        var advisor=((CustomerModel) user).getAdvisor().getFirstname()+" "+((CustomerModel) user).getAdvisor().getLastname();
-        payload.setAmount(account.getBalance());
-        payload.setOwner(user.getFirstname()+" "+user.getLastname());
-        payload.setRate(account.getAccountType().getRate());
-        payload.setInterest(0);
-        payload.setAdvisor(advisor);
-        return payload;
+        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
+            return  new AccountDetailsPayload(null,null,0,0,null,"Error : this user isn't allowed to see this account");
+        }
+        var advisor=account.getCustomer().getAdvisor();
+        return new AccountDetailsPayload(user.getFirstname()+" "+user.getLastname(),
+                advisor.getFirstname()+" "+advisor.getLastname(),account.getAccountType().getRate(),0,account.getBalance(),null);
     }
 }

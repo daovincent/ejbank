@@ -98,4 +98,19 @@ public class TransactionPayload {
     public void setState(String state) {
         this.state = state;
     }
+
+    @Override
+    public String toString() {
+        return "TransactionPayload{" +
+                "id=" + id +
+                ", date=" + date +
+                ", source=" + source +
+                ", destination=" + destination +
+                ", destination_user='" + destination_user + '\'' +
+                ", amount=" + amount +
+                ", author='" + author + '\'' +
+                ", comment='" + comment + '\'' +
+                ", state='" + state + '\'' +
+                '}';
+    }
 }
