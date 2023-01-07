@@ -33,8 +33,6 @@ public class AccountsBean implements AccountsBeanLocal {
             var customers = ((AdvisorModel) user).getCustomerModels();
             customers.forEach(c->accounts.addAll(c.getAccountModels()));
         }
-        System.out.println("Accounts : "+accounts);
-
         List<AccountsPayload.AccountsDetailsPayload> details = new ArrayList<>();
         for (AccountModel accountModel : accounts) {
             details.add(new AccountsPayload.AccountsDetailsPayload(
@@ -71,5 +69,20 @@ public class AccountsBean implements AccountsBeanLocal {
 
         }));
         return new AccountsPayload(details, details.isEmpty()?"Error : No account found for this user":null);
+    }
+
+    public AccountDetailsPayload getDetailedAccount(int userId, int accountId){
+        var user=em.find(UserModel.class,userId);
+        var account=em.find(AccountModel.class,accountId);
+        if (account == null){
+            return  new AccountDetailsPayload(null,null,0,0,null,"Error : this account doesn't exist");
+
+        }
+        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
+            return  new AccountDetailsPayload(null,null,0,0,null,"Error : this user isn't allowed to see this account");
+        }
+        var advisor=account.getCustomer().getAdvisor();
+        return new AccountDetailsPayload(user.getFirstname()+" "+user.getLastname(),
+                advisor.getFirstname()+" "+advisor.getLastname(),account.getAccountType().getRate(),0,account.getBalance(),null);
     }
 }

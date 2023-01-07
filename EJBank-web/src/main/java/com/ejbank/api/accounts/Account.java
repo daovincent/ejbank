@@ -1,5 +1,6 @@
 package com.ejbank.api.accounts;
 
+import com.ejbank.session.accounts.AccountDetailsPayload;
 import com.ejbank.session.accounts.AccountsBean;
 
 import javax.ejb.EJB;
@@ -17,10 +18,9 @@ public class Account {
 
     @EJB
     private AccountsBean accountsBean;
-
     @GET
     @Path("/{account_id}/{user_id}")
-    public String getAccount(@PathParam("account_id") int account_id, @PathParam("user_id") int user_id) {
-        return "";
+    public AccountDetailsPayload getAccount(@PathParam("account_id") int accountId, @PathParam("user_id") int userId) {
+        return accountsBean.getDetailedAccount(userId,accountId);
     }
 }

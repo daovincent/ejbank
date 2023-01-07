@@ -15,16 +15,17 @@ public class Transaction {
     @EJB
     private TransactionBeanLocal transactionBeanLocal;
 
-//    @GET
-//    @Path("/list/{account_id}/{offset}/{user_id}")
-//    public String getTransactionList(int account_id, int user_id) {
-//        return "";
-//    }
+    @GET
+    @Path("/list/{account_id}/{offset}/{user_id}")
+    public TransactionListPayload getTransactionList(@PathParam("account_id") int accountId,@PathParam("user_id") int userId,@PathParam("offset") int offset) {
+        System.out.println("INPUT DATA : acc> "+accountId+" user> "+userId+" off> "+offset);
+        return transactionBeanLocal.listTransactions(userId,accountId,offset);
+    }
 
     @POST
     @Path("/preview")
     @Consumes(MediaType.APPLICATION_JSON)
-    public TransactionPayload recapitulationTransaction(TransactionPayload payload) {
+    public TransactionPreviewResponsePayload recapitulationTransaction(TransactionPreviewRequestPayload payload) {
         System.out.println(payload);
         return transactionBeanLocal.transactionPreview(payload.getSource(),payload.getDestination(),payload.getAmount(),payload.getAuthor());
     }

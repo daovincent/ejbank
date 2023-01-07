@@ -1,18 +1,16 @@
 package com.ejbank.session.transaction;
 
-import com.ejbank.model.AccountModel;
-import com.ejbank.model.AdvisorModel;
-import com.ejbank.model.TransactionModel;
-import com.ejbank.model.UserModel;
+import com.ejbank.model.*;
+import com.ejbank.session.accounts.AccountDetailsPayload;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 @Stateless
@@ -43,9 +41,8 @@ public class TransactionBean implements TransactionBeanLocal{
         return new TransactionResponsePayload("false", "transaction rejected");
     }
     @Override
-    public TransactionPayload transactionPreview(int source, int dest, double amount, int author){
-        System.out.println("source : "+source+ " "+"dest : "+dest+ " "+"amount : "+amount+ " "+"author : "+author+ " ");
-        var payload=new TransactionPayload();
+    public TransactionPreviewResponsePayload transactionPreview(int source, int dest, double amount, int author){
+        var payload=new TransactionPreviewResponsePayload();
         var sourceAcc=em.find(AccountModel.class, source);
         var destAcc=em.find(AccountModel.class,dest);
         if (sourceAcc==null || destAcc==null) {
@@ -71,6 +68,60 @@ public class TransactionBean implements TransactionBeanLocal{
         payload.setBefore(sourceBal.add(BigDecimal.valueOf(-amount)));
         payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
         return payload;
+    }
+
+    public TransactionListPayload listTransactions(int userId, int accountId, int offset){
+        var user=em.find(UserModel.class,userId);
+        var account=em.find(AccountModel.class,accountId);
+        String author=null;
+        String approval=null;
+        if(user == null || account == null) {
+            return new TransactionListPayload(null,0,"Error : There is a problem with the account id or the user id");
+        }
+        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
+            return new TransactionListPayload(null,0,"Error : This user isn't allowed to access this account");
+        }
+        if (userId== account.getCustomer_id() ) {
+            author= user.getFirstname()+" "+user.getLastname();
+            approval="WAITING_APPROVAL";
+        }
+        else if(account.getCustomer().getAdvisor().getId()==userId){
+            author=account.getCustomer().getAdvisor().getFirstname()+" "+account.getCustomer().getAdvisor().getLastname();
+            approval="TO_APPROVE";
+        }
+
+        var transactions = getTr(accountId,offset);
+        // Marche pas > faut faire une requête SQL
+        var allT= new ArrayList<TransactionPayload>();
+        for(var t : transactions){
+            var destUser= t.getAccount_id_to().getCustomer().getFirstname() + " " + t.getAccount_id_to().getCustomer().getLastname();
+            var source = t.getAccount_id_from().getId();
+            var dest=t.getAccount_id_to().getCustomer_id();
+            var state = t.getApplied()?"APPLYED":approval;
+            var transacPayload= new TransactionPayload(t.getId(),t.getDateTime(),source,dest,destUser,
+                    t.getAmount(),author,t.getComment(),state);
+            allT.add(transacPayload);
+        }
+        return new TransactionListPayload(allT,getNbTr(account),null);
+    }
+
+    private List<TransactionModel> getTr(int accountId, int offset){
+        var account = em.find(AccountModel.class,accountId);
+        TypedQuery<TransactionModel> query = em.createQuery(
+                "SELECT e FROM TransactionModel e " +
+                        "WHERE (e.account_id_from=:account OR e.account_id_to=:account)" +
+                        "ORDER BY e.dateTime desc", TransactionModel.class);
+        query.setParameter("account",account);
+        query.setMaxResults(10);
+        query.setFirstResult(offset);
+        return query.getResultList();
+    }
+    private int getNbTr(AccountModel account){
+        TypedQuery<Long> countQuery = em.createQuery(
+                "SELECT COUNT(e) FROM TransactionModel e " +
+                        "WHERE (e.account_id_from=:account OR e.account_id_to=:account)", Long.class);
+        countQuery.setParameter("account",account);
+        return Math.toIntExact(countQuery.getSingleResult());
     }
 
     @Override
