@@ -1,6 +1,7 @@
 package com.ejbank.session.transaction;
 
 import com.ejbank.model.*;
+import com.ejbank.session.accounts.AccountDetailsPayload;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -41,7 +42,6 @@ public class TransactionBean implements TransactionBeanLocal{
     }
     @Override
     public TransactionPreviewResponsePayload transactionPreview(int source, int dest, double amount, int author){
-        System.out.println("source : "+source+ " "+"dest : "+dest+ " "+"amount : "+amount+ " "+"author : "+author+ " ");
         var payload=new TransactionPreviewResponsePayload();
         var sourceAcc=em.find(AccountModel.class, source);
         var destAcc=em.find(AccountModel.class,dest);
@@ -56,7 +56,6 @@ public class TransactionBean implements TransactionBeanLocal{
         var destBal=destAcc.getBalance();
 //        // Should verify if source account belongs to the author
         if(sourceBal.compareTo(BigDecimal.ZERO) > 0 && sourceBal.compareTo(BigDecimal.valueOf(amount)) > 0){
-            System.out.println(true);
             payload.setResult(true);
             // Result of transaction or result for source account ???
             payload.setBefore(sourceBal.subtract(BigDecimal.valueOf(amount)));
@@ -71,14 +70,15 @@ public class TransactionBean implements TransactionBeanLocal{
     }
 
     public TransactionListPayload listTransactions(int userId, int accountId, int offset){
-        var payload= new TransactionListPayload();
         var user=em.find(UserModel.class,userId);
         var account=em.find(AccountModel.class,accountId);
         String author=null;
         String approval=null;
         if(user == null || account == null) {
-            payload.setError("Error : There is a problem with the account id or the user id");
-            return payload;
+            return new TransactionListPayload(null,0,"Error : There is a problem with the account id or the user id");
+        }
+        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
+            return new TransactionListPayload(null,0,"Error : This user isn't allowed to access this account");
         }
         if (userId== account.getCustomer_id() ) {
             author= user.getFirstname()+" "+user.getLastname();
@@ -88,39 +88,38 @@ public class TransactionBean implements TransactionBeanLocal{
             author=account.getCustomer().getAdvisor().getFirstname()+" "+account.getCustomer().getAdvisor().getLastname();
             approval="TO_APPROVE";
         }
-        System.out.println(author);
 
         var transactions = getTr(accountId,offset);
         // Marche pas > faut faire une requête SQL
         var allT= new ArrayList<TransactionPayload>();
         for(var t : transactions){
-            var transacPayload= new TransactionPayload();
-            transacPayload.setDate(t.getDateTime());
             var destUser= t.getAccount_id_to().getCustomer().getFirstname() + " " + t.getAccount_id_to().getCustomer().getLastname();
             var source = t.getAccount_id_from().getId();
             var dest=t.getAccount_id_to().getCustomer_id();
             var state = t.getApplied()?"APPLYED":approval;
-            transacPayload.setDestination(dest);
-            transacPayload.setSource(source);
-            transacPayload.setAuthor(author);
-            transacPayload.setAmount(t.getAmount());
-            transacPayload.setDestination_user(destUser);
-            transacPayload.setState(state);
-            transacPayload.setComment(t.getComment());
-            System.out.println("T===="+t);
-            System.out.println("TRANSAC ="+transacPayload);
+            var transacPayload= new TransactionPayload(t.getId(),t.getDateTime(),source,dest,destUser,
+                    t.getAmount(),author,t.getComment(),state);
             allT.add(transacPayload);
         }
-        return payload;
+        return new TransactionListPayload(allT,getNbTr(account),null);
     }
 
     private List<TransactionModel> getTr(int accountId, int offset){
+        var account = em.find(AccountModel.class,accountId);
         TypedQuery<TransactionModel> query = em.createQuery(
                 "SELECT e FROM TransactionModel e " +
-                        "WHERE (e.account_id_from=:accountId OR e.account_id_to=:accountId)" +
+                        "WHERE (e.account_id_from=:account OR e.account_id_to=:account)" +
                         "ORDER BY e.dateTime desc", TransactionModel.class);
+        query.setParameter("account",account);
         query.setMaxResults(10);
         query.setFirstResult(offset);
         return query.getResultList();
+    }
+    private int getNbTr(AccountModel account){
+        TypedQuery<Long> countQuery = em.createQuery(
+                "SELECT COUNT(e) FROM TransactionModel e " +
+                        "WHERE (e.account_id_from=:account OR e.account_id_to=:account)", Long.class);
+        countQuery.setParameter("account",account);
+        return Math.toIntExact(countQuery.getSingleResult());
     }
 }

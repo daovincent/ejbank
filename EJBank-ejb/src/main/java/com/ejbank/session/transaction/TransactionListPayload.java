@@ -34,6 +34,12 @@ public class TransactionListPayload {
         this.total = total;
     }
 
+    public TransactionListPayload(List<TransactionPayload> transactions,  int total,String error) {
+        this.transactions = transactions;
+        this.error = error;
+        this.total = total;
+    }
+
     @Override
     public String toString() {
         return "TransactionListPayload{" +

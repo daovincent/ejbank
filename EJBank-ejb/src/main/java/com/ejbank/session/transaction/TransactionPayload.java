@@ -4,7 +4,20 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class TransactionPayload {
-//    {
+    public TransactionPayload(int id, Date date, int source, int destination, String destination_user, BigDecimal amount, String author, String comment, String state) {
+        this.id = id;
+        // Dunno why doesn't work if regular Date and not String, maybe frontend requirement
+        this.date = date.toString();
+        this.source = source;
+        this.destination = destination;
+        this.destination_user = destination_user;
+        this.amount = amount;
+        this.author = author;
+        this.comment = comment;
+        this.state = state;
+    }
+
+    //    {
 //        "id": 271077732,
 //            "date": "2019-10-16T15:28:02",
 //            "source": "Label du compte source",
@@ -16,7 +29,7 @@ public class TransactionPayload {
 //            "state": "APPLYED"
 //    },
     private int id;
-    private Date date;
+    private String date;
     private int source;
     private int destination;
     private String destination_user;
@@ -49,12 +62,12 @@ public class TransactionPayload {
         this.id = id;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = date.toString();
     }
 
 

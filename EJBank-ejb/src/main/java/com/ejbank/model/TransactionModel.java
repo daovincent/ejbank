@@ -102,4 +102,18 @@ public class TransactionModel {
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
     }
+
+    @Override
+    public String toString() {
+        return "TransactionModel{" +
+                "id=" + id +
+                ", account_id_from=" + account_id_from +
+                ", account_id_to=" + account_id_to +
+                ", author=" + author +
+                ", amount=" + amount +
+                ", comment='" + comment + '\'' +
+                ", applied=" + applied +
+                ", dateTime=" + dateTime +
+                '}';
+    }
 }
