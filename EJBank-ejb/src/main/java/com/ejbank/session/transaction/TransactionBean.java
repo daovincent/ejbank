@@ -174,6 +174,10 @@ public class TransactionBean implements TransactionBeanLocal{
             );
         }
         if (transactionValidationRequestPayload.isApprove()) {
+            var accFrom=transaction.getAccount_id_from();
+            var accTo=transaction.getAccount_id_to();
+            accFrom.setBalance(accFrom.getBalance().subtract(transaction.getAmount()));
+            accTo.setBalance(accTo.getBalance().add(transaction.getAmount()));
             return new TransactionValidationResponsePayload(
                     true,
                     "Transaction validée " + transactionModel.getId(),
