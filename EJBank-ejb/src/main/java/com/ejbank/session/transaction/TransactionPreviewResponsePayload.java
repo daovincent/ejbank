@@ -8,6 +8,15 @@ public class TransactionPreviewResponsePayload {
 //            "after": 350,
 //            "message": "Vous ne disposez pas d'un solde suffisant... A ce titre, la variable 'result' du payload devrait être à 'false', mais elle est à 'true' pour vous permettre de tester l'envoie de la transaction ;)",
 //            "error": null
+
+    public TransactionPreviewResponsePayload(boolean result, BigDecimal before, BigDecimal after, String message, String error) {
+        this.result = result;
+        this.before = before;
+        this.after = after;
+        this.message = message;
+        this.error = error;
+    }
+
     private boolean result;
     private BigDecimal before;
     private BigDecimal after;

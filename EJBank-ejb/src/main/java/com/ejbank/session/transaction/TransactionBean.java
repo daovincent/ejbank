@@ -42,32 +42,20 @@ public class TransactionBean implements TransactionBeanLocal{
     }
     @Override
     public TransactionPreviewResponsePayload transactionPreview(int source, int dest, double amount, int author){
-        var payload=new TransactionPreviewResponsePayload();
         var sourceAcc=em.find(AccountModel.class, source);
         var destAcc=em.find(AccountModel.class,dest);
         if (sourceAcc==null || destAcc==null) {
-            payload.setResult(false);
-            payload.setBefore(BigDecimal.valueOf(amount));
-            payload.setAfter(BigDecimal.ZERO);
-            payload.setError("Error : One of the accounts given doesn't exist");
-            return payload;
+            return new TransactionPreviewResponsePayload(false,BigDecimal.valueOf(amount),BigDecimal.ZERO,null,"Error : One of the accounts given doesn't exist");
         }
         var sourceBal=sourceAcc.getBalance();
         var destBal=destAcc.getBalance();
 //        // Should verify if source account belongs to the author
         if(sourceBal.compareTo(BigDecimal.ZERO) > 0 && sourceBal.compareTo(BigDecimal.valueOf(amount)) > 0){
-            System.out.println(true);
-            payload.setResult(true);
-            // Result of transaction or result for source account ???
-            payload.setBefore(sourceBal.subtract(BigDecimal.valueOf(amount)));
-            payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
-            return payload;
+            return new TransactionPreviewResponsePayload(true,sourceBal.subtract(BigDecimal.valueOf(amount)),
+                    destBal.add(BigDecimal.valueOf(amount)),null,null);
         }
-        payload.setResult(false);
-        payload.setMessage("Vous ne disposez pas d'un solde suffisant");
-        payload.setBefore(sourceBal.add(BigDecimal.valueOf(-amount)));
-        payload.setAfter(destBal.add(BigDecimal.valueOf(amount)));
-        return payload;
+        return new TransactionPreviewResponsePayload(false,sourceBal.add(BigDecimal.valueOf(-amount)),destBal.add(BigDecimal.valueOf(amount)),
+                "Vous ne disposez pas d'un solde suffisant",null);
     }
 
     public TransactionListPayload listTransactions(int userId, int accountId, int offset){
