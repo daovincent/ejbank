@@ -78,7 +78,7 @@ public class TransactionBean implements TransactionBeanLocal{
         if(user == null || account == null) {
             return new TransactionListPayload(null,0,"Error : There is a problem with the account id or the user id");
         }
-        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) || account.getCustomer().getAdvisor().getId()!=userId ){
+        if((user instanceof CustomerModel && account.getCustomer_id()!= user.getId()) && account.getCustomer().getAdvisor().getId()!=userId ){
             return new TransactionListPayload(null,0,"Error : This user isn't allowed to access this account");
         }
         if (userId== account.getCustomer_id() ) {
@@ -105,7 +105,7 @@ public class TransactionBean implements TransactionBeanLocal{
         return new TransactionListPayload(allT,getNbTr(account),null);
     }
 
-    private List<TransactionModel> getTr(int accountId, int offset){
+    public List<TransactionModel> getTr(int accountId, int offset){
         var account = em.find(AccountModel.class,accountId);
         TypedQuery<TransactionModel> query = em.createQuery(
                 "SELECT e FROM TransactionModel e " +

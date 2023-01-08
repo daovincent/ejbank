@@ -18,7 +18,7 @@ public class Transaction {
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
     public TransactionListPayload getTransactionList(@PathParam("account_id") int accountId,@PathParam("user_id") int userId,@PathParam("offset") int offset) {
-        System.out.println("INPUT DATA : acc> "+accountId+" user> "+userId+" off> "+offset);
+//        System.out.println("INPUT DATA : acc> "+accountId+" user> "+userId+" off> "+offset);
         return transactionBeanLocal.listTransactions(userId,accountId,offset);
     }
 

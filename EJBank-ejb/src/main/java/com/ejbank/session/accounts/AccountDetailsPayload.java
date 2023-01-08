@@ -12,7 +12,7 @@ public class AccountDetailsPayload {
 //            "error": null
 //    }
 
-    public AccountDetailsPayload(String owner, String advisor, int rate, int interest, BigDecimal amount, String error) {
+    public AccountDetailsPayload(String owner, String advisor, int rate, String interest, BigDecimal amount, String error) {
         this.owner = owner;
         this.advisor = advisor;
         this.rate = rate;
@@ -24,7 +24,7 @@ public class AccountDetailsPayload {
     private final String owner;
     private final String advisor;
     private final int rate;
-    private final int interest;
+    private final String interest;
     private final BigDecimal amount;
     private final String error;
 
@@ -40,7 +40,7 @@ public class AccountDetailsPayload {
         return rate;
     }
 
-    public int getInterest() {
+    public String getInterest() {
         return interest;
     }
 
